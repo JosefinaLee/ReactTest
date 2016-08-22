@@ -1,0 +1,27 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+img{
+	border: 0;
+}
+html, body{
+	width: 100%;
+	height: 100%;
+}
+#photo-wall{
+	width: 100%;
+	height: 100%;
+	background-color: #ccc;
+}
+.img-fg{
+	width: 320px;
+	height: 320px;
+	background-color: #fff;
+	padding-top: 40px;
+	text-align: center;
+	position: absolute;
+}
+.img-fg h2{
+	margin-top: 20px;
+}
