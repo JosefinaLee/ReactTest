@@ -4,10 +4,9 @@
 	};
 	var ImgApp = React.createClass({
 		render: function(){
-			// console.log(this.props.info.pos.left);
 			var style = {
 				left: this.props.info.pos.left,
-				right: this.props.info.pos.right
+				top: this.props.info.pos.top
 			};
 			return (
 				<figure className='img-fg' style={style}>
@@ -75,7 +74,7 @@
 				rightRangeX: [hstgW + himgW, stgW - himgW],
 				rangeY: [-himgH, stgH - himgH]
 			};
-			console.log(stgH);
+			// console.log(this.Ranges.imgRange.rangeY);
 		},
 
 
@@ -98,7 +97,7 @@
 					top: getRandom(this.Ranges.imgRange.rangeY[0], this.Ranges.imgRange.rangeY[1]),
 					left: getRandom(rangelr[0], rangelr[1])
 				};
-				console.log(this.Ranges.imgRange.rangeY[1]);
+				// console.log(reArr[i].pos.top);
 			}
 			this.setState({
 				imgInfos: reArr
@@ -134,7 +133,7 @@
 			}.bind(this));
 
 			return (
-				<section ref="stage">
+				<section ref="stage" className="stage">
 					<section>
 						{imgArr}
 					</section>
@@ -147,7 +146,6 @@
 		componentDidMount: function(){
 			this.setRanges();
 			this.rearrange(0);
-			console.log(this.state.imgInfos);
 		}
 
 	});
