@@ -1,9 +1,16 @@
 (function(){
+	function getRandom(low, high){
+		return Math.ceil(Math.random()*(high - low) + low);
+	};
 	var ImgApp = React.createClass({
 		render: function(){
-			// console.log(this.props.data);
+			// console.log(this.props.info.pos.left);
+			var style = {
+				left: this.props.info.pos.left,
+				right: this.props.info.pos.right
+			};
 			return (
-				<figure className='img-fg'>
+				<figure className='img-fg' style={style}>
 					<img src= {'img/' + this.props.data.fileName}></img>
 					<figcaption>
 						<h2>{this.props.data.title}</h2>
@@ -21,6 +28,21 @@
 		}
 	});
 	var Photowall = React.createClass({
+
+		getInitialState: function(){
+			return {
+				imgInfos: [
+					{
+						pos: {
+							top: 0,
+							left: 0
+						}
+
+					}
+				]
+			}
+		},
+
 		Ranges: {
 			center: {
 				left: 0,
@@ -29,13 +51,13 @@
 			imgRange: {
 				leftRangeX: [0, 0],
 				rightRangeX: [0, 0],
-				rangeY: 0
+				rangeY: [0, 0]
 			}
 		},
 
 		setRanges: function(){
 			var stageDOM = ReactDOM.findDOMNode(this.refs.stage),
-				imgDOM = React.findDOMNode(this.refs.img0);
+				imgDOM = ReactDOM.findDOMNode(this.refs.img0);
 			var stgW = stageDOM.clientWidth,
 				stgH = stageDOM.clientHeight,
 				imgW = imgDOM.clientWidth,
@@ -51,31 +73,65 @@
 			this.Ranges.imgRange = {
 				leftRangeX: [-himgW, hstgW - 3*himgW],
 				rightRangeX: [hstgW + himgW, stgW - himgW],
-				y: [-himgH, stgH - himgH]
+				rangeY: [-himgH, stgH - himgH]
 			};
-			console.log(this.Ranges);
+			console.log(stgH);
 		},
 
-		getInitialState: function(){
-			return {
-				imgInfos: {
-					top: 0,
-					left: 0
+
+
+		rearrange: function(centerIndex){
+			var reArr = this.state.imgInfos;
+			// console.log(reArr);
+			var rangelr = null;
+			reArr[centerIndex].pos = this.Ranges.center;
+			for(var i=0; i<reArr.length; i++){
+				if(i == centerIndex){
+					continue;
 				}
+				if(i < reArr.length/2){
+					rangelr = this.Ranges.imgRange.leftRangeX;
+				}else{
+					rangelr = this.Ranges.imgRange.rightRangeX;
+				}
+				reArr[i].pos = {
+					top: getRandom(this.Ranges.imgRange.rangeY[0], this.Ranges.imgRange.rangeY[1]),
+					left: getRandom(rangelr[0], rangelr[1])
+				};
+				console.log(this.Ranges.imgRange.rangeY[1]);
 			}
-		},
+			this.setState({
+				imgInfos: reArr
+			});
 
-		rearrange: function(){
-			var rearrangeInfo = this.state.imgInfos;
 		},
 
 		render: function(){
 			var imgArr = [],
 				navArr = [];
 			imgDatas.forEach(function(elem, index){
-				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index}/>);
+
+
+				if(!this.state.imgInfos[index]){
+					this.state.imgInfos[index] = {
+						pos : {
+							top : 0,
+							left : 0
+						}
+						,
+						rotate : 0,
+						isCenter : false,
+						isInverse : false
+
+
+					};
+				}
+
+
+
+				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index} info={this.state.imgInfos[index]} />);
 				navArr.push(<NavApp key={index}/>);
-			});
+			}.bind(this));
 
 			return (
 				<section ref="stage">
@@ -90,6 +146,8 @@
 		},
 		componentDidMount: function(){
 			this.setRanges();
+			this.rearrange(0);
+			console.log(this.state.imgInfos);
 		}
 
 	});
