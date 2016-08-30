@@ -3,13 +3,20 @@
 		return Math.ceil(Math.random()*(high - low) + low);
 	};
 	var ImgApp = React.createClass({
+		handleClick : function(){
+			if(this.props.isCenter){
+				// this.props.inverse();
+			}else{
+				this.props.center();
+			}
+		},
 		render: function(){
 			var style = {
 				left: this.props.info.pos.left,
 				top: this.props.info.pos.top
 			};
 			return (
-				<figure className='img-fg' style={style}>
+				<figure className='img-fg' style={style} onClick={this.handleClick}>
 					<img src= {'img/' + this.props.data.fileName}></img>
 					<figcaption>
 						<h2>{this.props.data.title}</h2>
@@ -105,6 +112,12 @@
 
 		},
 
+		center : function(index){
+			return function(){
+				this.rearrange(index);
+			}.bind(this);
+		},
+
 		render: function(){
 			var imgArr = [],
 				navArr = [];
@@ -128,7 +141,7 @@
 
 
 
-				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index} info={this.state.imgInfos[index]} />);
+				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index} info={this.state.imgInfos[index]} center={this.center(index)} isCenter={this.state.imgInfos[index].isCenter}/>);
 				navArr.push(<NavApp key={index}/>);
 			}.bind(this));
 
