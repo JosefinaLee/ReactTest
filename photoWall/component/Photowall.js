@@ -4,8 +4,12 @@
 	};
 	var ImgApp = React.createClass({
 		handleClick : function(){
+
 			if(this.props.isCenter){
-				// this.props.inverse();
+				this.props.inverse();
+				console.log("rotate");
+
+
 			}else{
 				this.props.center();
 			}
@@ -15,6 +19,11 @@
 				left: this.props.info.pos.left,
 				top: this.props.info.pos.top
 			};
+			console.log(this.props.isInverse);
+
+			if(this.props.isInverse){
+				style.transform = 'rotateY(180deg)';
+			}
 			return (
 				<figure className='img-fg' style={style} onClick={this.handleClick}>
 					<img src= {'img/' + this.props.data.fileName}></img>
@@ -42,8 +51,10 @@
 						pos: {
 							top: 0,
 							left: 0
-						}
-
+						},
+						rotate : 0,
+						isCenter : false,
+						isInverse : false
 					}
 				]
 			}
@@ -91,6 +102,8 @@
 			// console.log(reArr);
 			var rangelr = null;
 			reArr[centerIndex].pos = this.Ranges.center;
+			reArr[centerIndex].rotate = 0;
+			reArr[centerIndex].isCenter = true
 			for(var i=0; i<reArr.length; i++){
 				if(i == centerIndex){
 					continue;
@@ -104,6 +117,9 @@
 					top: getRandom(this.Ranges.imgRange.rangeY[0], this.Ranges.imgRange.rangeY[1]),
 					left: getRandom(rangelr[0], rangelr[1])
 				};
+				reArr[i].rotate = getRandom(-30, 30);
+				reArr[i].isCenter = false;
+				reArr[i].isInverse = false;
 				// console.log(reArr[i].pos.top);
 			}
 			this.setState({
@@ -115,6 +131,15 @@
 		center : function(index){
 			return function(){
 				this.rearrange(index);
+			}.bind(this);
+		},
+
+		inverse : function(index){
+			return function(){
+				this.state.imgInfos[index].isInverse = !this.state.imgInfos[index].isInverse;
+				this.setState({
+					imgInfos : this.state.imgInfos
+				});
 			}.bind(this);
 		},
 
@@ -141,7 +166,7 @@
 
 
 
-				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index} info={this.state.imgInfos[index]} center={this.center(index)} isCenter={this.state.imgInfos[index].isCenter}/>);
+				imgArr.push(<ImgApp data={elem} key={index} ref={"img"+index} info={this.state.imgInfos[index]} center={this.center(index)} isCenter={this.state.imgInfos[index].isCenter} inverse={this.inverse(index)} isInverse={this.state.imgInfos[index].isInverse}/>);
 				navArr.push(<NavApp key={index}/>);
 			}.bind(this));
 
